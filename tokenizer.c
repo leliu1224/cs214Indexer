@@ -170,6 +170,7 @@ SortedListPtr TKFN(char* input){
 }
 
 void processToken(char * token, SortedListPtr list, char * filepath){
-// takes token, check if it's in sorted list
+
+// takes token, check if it's in sorted list, compare token and also filepath
   // increment the count by 1 or add a new node to the sorted list
-//}
+}

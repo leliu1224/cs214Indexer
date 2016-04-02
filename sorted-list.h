@@ -14,7 +14,7 @@
  * that knows how to compare the data being sorted, but your code must do the rest
  * of the bookkeeping in a generic manner.
  *
- * The comparator function will take pointers to two data items and will return -1 if the 1st 
+ * The comparator function will take pointers to two data items and will return -1 if the 1st
  * is smaller, 0 if the two are equal, and 1 if the 2nd is smaller.
  *
  * The user will also supply a destruct function will take a pointer to a single data item
@@ -28,11 +28,12 @@ typedef void (*DestructFuncT)( void * );
 /*
  * Sorted list type that will hold all the data to be sorted.
  */
- 
+
 struct node{
   void * value;
   struct node* next;
-  int refCount; 
+  int refCount;
+  char * filepath;
 };
 
 struct SortedList
@@ -54,7 +55,7 @@ void SLDestroy(SortedListPtr list);
 /*
  * SLInsert inserts a given data item 'newObj' into a SortedList while maintaining the
  *   order and uniqueness of list items.
- * 
+ *
  * SLInsert should return 1 if 'newObj' is not equal to any other items in the list and
  *   was successfully inserted.
  * SLInsert should return 0 if 'newObj' is equal to an item already in the list or it was

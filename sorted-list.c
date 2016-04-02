@@ -3,7 +3,7 @@
 #include "sorted-list.h"
 
 /*returns a linked list node with value*/
-struct node* CreateNode(void* newObj){
+struct node* CreateRecord(void* newObj, char* pathname ){
 
     struct node* newnode = (struct node*)malloc(sizeof(struct node));
     if(newnode == NULL){
@@ -11,7 +11,8 @@ struct node* CreateNode(void* newObj){
     }
     newnode->value = newObj;
     newnode->refCount = 1;
-    newnode->next = NULL;	
+    newnode->filepath = pathname;
+    newnode->next = NULL;
 
     return newnode;
 }
@@ -45,7 +46,7 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df){
  *   Both the comparator and destructor functions will be defined by the user as per
  *     the prototypes above.
  *   Both functions must be stored in the SortedList struct.
- * 
+ *
  * SLCreate must return NULL if it does not succeed, and a non-NULL SortedListPtr
  *   on success.
  */
@@ -62,14 +63,14 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
     list->head = NULL;
 
     return list;
-}	
+}
 
 /*--------------------------------------------------------------------------------------------
  * SLDestroy destroys a SortedList, freeing all dynamically-allocated memory.
  */
 void SLDestroy(SortedListPtr list){
   if(list != NULL){
-    FreeLinkedList(list->head, list->DESTRUCTOR); //Free Linked List before freeing SortedList 
+    FreeLinkedList(list->head, list->DESTRUCTOR); //Free Linked List before freeing SortedList
     free(list);
   }
 }
@@ -81,7 +82,7 @@ void SLDestroy(SortedListPtr list){
 /*----------------------------------------------------------------------------------------------
  * SLInsert inserts a given data item 'newObj' into a SortedList while maintaining the
  *   order and uniqueness of list items.
- * 
+ *
  * SLInsert should return 1 if 'newObj' is not equal to any other items in the list and
  *   was successfully inserted.
  * SLInsert should return 0 if 'newObj' is equal to an item already in the list or it was
@@ -101,7 +102,7 @@ int SLInsert(SortedListPtr list, void *newObj){
     // If there is nothing in the SortedList yet
     if(list->head == NULL){
         list->head = newnode;
-        list->head->refCount = 1;	
+        list->head->refCount = 1;
         return 1;
     }
 
@@ -110,7 +111,7 @@ int SLInsert(SortedListPtr list, void *newObj){
         list->DESTRUCTOR(newnode->value);
         free(newnode);
         return 0;
-    } 
+    }
 
     // Normal insert
     struct node* ptr = list->head;
@@ -160,7 +161,7 @@ int SLRemove(SortedListPtr list, void *newObj){
         struct node* temp = list->head;
         if(list->head->next != NULL){
             list->head = list->head->next;
-            list->head->refCount--; //Subtract ref count 
+            list->head->refCount--; //Subtract ref count
             if(list->head->refCount == 0)
                 list->DESTRUCTOR(temp->value); //Destroy the node IF AND ONLY IF REFCOUNT IS 0
             free(temp);
