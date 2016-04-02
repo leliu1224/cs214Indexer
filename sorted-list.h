@@ -46,7 +46,7 @@ struct SortedList
 };
 typedef struct SortedList* SortedListPtr;
 
-struct node* CreateNode(void* newObj);
+struct node* CreateRecord(void* newObj, char* pathname);
 void FreeLinkedList(struct node* ptr, DestructFuncT df);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df);
@@ -64,7 +64,7 @@ void SLDestroy(SortedListPtr list);
  * Data item equality should be tested with the user's comparator function *
  */
 
-int SLInsert(SortedListPtr list, void *newObj);
+int SLInsert(SortedListPtr list, void *newObj, char* pathname);
 
 /*
  * SLRemove should remove 'newObj' from the SortedList in a manner that

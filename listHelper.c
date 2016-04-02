@@ -37,24 +37,6 @@ void PrintSortedList(SortedListPtr list){
     return;
 }
 
-int* NewIntObj(int value){
-  int* newvalue = (int*)malloc(sizeof(int));
-  *newvalue = value;
-  return newvalue;
-}
-
-void Insert(int value, SortedListPtr list){
-  int* newvalue = NewIntObj(value);
-  SLInsert(list, (void*)newvalue);
-  return;
-}
-
-void Remove(int value, SortedListPtr list){
-  int* newvalue = NewIntObj(value);
-  SLRemove(list, (void*)newvalue);
-  return;
-}
-
 /*String functions*/
 int StringComparator(void* p1, void* p2){
   char* s1 = (char*)p1;
@@ -89,25 +71,6 @@ void PrintStringSortedList(SortedListPtr list){
   }
   printf("\n");
   printf("-----------\n");
-  return;
-}
-
-char* NewStringObj(char* str){
-  char* newstr = (char*)malloc(strlen(str)+1);
-  strncpy(newstr, str, strlen(str));
-  newstr[strlen(str)] = '\0';
-  return newstr;
-}
-
-void InsertString(char* str, SortedListPtr list){
-  char* newstr = NewStringObj(str);
-  SLInsert(list, (void*)str);
-  return;
-}
-
-void RemoveString(char* str, SortedListPtr list){
-  char* newstr = NewStringObj(str);
-  SLRemove(list, (void*)str);
   return;
 }
 

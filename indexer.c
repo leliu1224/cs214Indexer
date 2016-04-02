@@ -51,6 +51,36 @@ int file_handler(char* path){
   //Open file
     //Tokenize words
     //Put words into index by filename
+  
+  FILE *fp;
+  long lSize;
+  char *buffer;
+
+  fp = fopen ( path , "rb" );
+  if( !fp ) perror(path),exit(1);
+
+  fseek( fp , 0L , SEEK_END);
+  lSize = ftell( fp );
+  rewind( fp );
+
+  /* allocate memory for entire content */
+  buffer = calloc( 1, lSize+1 );
+  if( !buffer ) fclose(fp),fputs("memory alloc fails",stderr),exit(1);
+
+  /* copy the file into the buffer */
+  if( 1!=fread( buffer , lSize, 1 , fp) )
+    fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
+
+  /* do your work here, buffer is a string contains the whole text */
+  TKFN(buffer);
+  // printf("%s",buffer);
+
+  fclose(fp);
+  free(buffer);
+
+
+
+
   return 1;
 }
 

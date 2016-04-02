@@ -91,8 +91,8 @@ void SLDestroy(SortedListPtr list){
  * Data item equality should be tested with the user's comparator function *
  */
 
-int SLInsert(SortedListPtr list, void *newObj){
-    struct node* newnode = CreateNode(newObj);
+int SLInsert(SortedListPtr list, void *newObj, char* pathname){
+  struct node* newnode = CreateRecord(newObj, pathname);
 
     // Invalid node creation for some reason
     if(newnode == NULL){
