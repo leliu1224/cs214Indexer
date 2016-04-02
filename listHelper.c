@@ -117,8 +117,10 @@ void RemoveString(char* str, SortedListPtr list){
  * Call InsertString(<string>, stringlist) to insert into string list
  * Call RemoveString(<string>, stringlist) to insert into string list
  */
+
+/*
 int main(int argc, char** argv){
-  /*
+  
     SortedListPtr list = SLCreate(IntComparator, IntDestructor); //store fn ptrs in list
 
     printf("Inserting 100\n");
@@ -140,7 +142,7 @@ int main(int argc, char** argv){
     PrintSortedList(list);
 
     SLDestroy(list);
-  */
+  
     SortedListPtr stringlist = SLCreate(StringComparator, StringDestructor);
     InsertString("Aa", stringlist);
     InsertString("Baa", stringlist);
@@ -152,3 +154,4 @@ int main(int argc, char** argv){
     SLDestroy(stringlist);
     return 0;
 }
+*/
