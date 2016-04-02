@@ -158,7 +158,8 @@ SortedListPtr TKFN(char* input){
     if(returnedtoken == NULL)
       continue;
 
-    PrintToken(returnedtoken);
+    // PrintToken(returnedtoken);
+    // processToken(returnedtoken, list, filepath);
 
     if(returnedtoken != NULL)
       free(returnedtoken);

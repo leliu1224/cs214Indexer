@@ -91,6 +91,7 @@ void SLDestroy(SortedListPtr list){
  * Data item equality should be tested with the user's comparator function *
  */
 
+//
 int SLInsert(SortedListPtr list, void *newObj, char* pathname){
   struct node* newnode = CreateRecord(newObj, pathname);
 
@@ -103,11 +104,22 @@ int SLInsert(SortedListPtr list, void *newObj, char* pathname){
     if(list->head == NULL){
         list->head = newnode;
         list->head->refCount = 1;
+        list->head->filepath = pathname;
         return 1;
     }
 
-    // Check for duplicates in list
+    // Check for duplicates in start of list
     if(list->COMPARATOR(list->head->value, newnode->value) == 0){
+        // if(list->COMPARATOR(list->head->filepath, newnode->filepath) == 0){
+        //   newnode->refCount++;
+        // }
+        // else if(list->COMPARATOR(list->head->filepath, newnode->value) == -1){
+        //   newnode->next = list->head;
+        //   list->head = newnode;
+        // }
+        // else{
+        //   list->head->next = newnode;
+        // }
         list->DESTRUCTOR(newnode->value);
         free(newnode);
         return 0;
