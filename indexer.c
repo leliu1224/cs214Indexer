@@ -105,19 +105,22 @@ int file_handler(char* path, SortedListPtr sortedlist){
   char *buffer;
 
   fp = fopen ( path , "rb" );
-  if( !fp ) perror(path),exit(1);
+  if( !fp ){
+    perror(path);return 0;
+  }
 
   fseek( fp , 0L , SEEK_END);
   lSize = ftell( fp );
   rewind( fp );
 
   /* allocate memory for entire content */
-  buffer = calloc( 1, lSize+1 );
-  if( !buffer ) fclose(fp),fputs("memory alloc fails",stderr),exit(1);
+  buffer = calloc( 1, lSize+1 ); 
+  if( !buffer ){ //Error check
+    fclose(fp);printf("malloc failed in %s at line %d\n", __FILE__,__LINE__);return 0; }
 
   /* copy the file into the buffer */
-  if( 1!=fread( buffer , lSize, 1 , fp) )
-    fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
+  if( 1!=fread( buffer , lSize, 1 , fp) ){ //Error check
+    fclose(fp),free(buffer);printf("fread failed in %s at line %d, caused by filepath: \"%s\"\n", __FILE__,__LINE__, path);return 0; }
 
   /* do your work here, buffer is a string contains the whole text */
   TKFN(buffer, sortedlist, path);
