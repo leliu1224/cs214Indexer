@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 struct node{
+  //char* value;
   char value[256];
   char* filepath;
   int refCount;
@@ -35,5 +36,6 @@ void SLDestroy(SortedListPtr list);
 int SLInsert(SortedListPtr list, char* newObj, char* pathname);
 //int SLRemove(SortedListPtr list, char* newObj);
 
+SortedListPtr finalSort(SortedListPtr list);
 
 #endif

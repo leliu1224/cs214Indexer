@@ -14,22 +14,22 @@ int RecordComparator(struct node* p1, struct node* p2){
   char* word2 = (char*)r2->value;
 
   int x = strcmp(word1, word2);
-  if(x > 0)
+  if(x > 0) //Iterate forward
     return -1;
-  else if(x == 0)
+  else if(x == 0) //Special case
     return ComparePathHelper(r1->filepath, r2->filepath);
-  else if(x < 0)
+  else if(x < 0) //Found spot
     return 1;
 }
 
 int ComparePathHelper(char* p1, char* p2){
   int x = strcmp(p1, p2);
 
-  if(x < 0)
+  if(x < 0) //Case where path is less
     return -1;
   else if(x == 0)
     return 0;
-  else if(x > 0)
+  else if(x > 0) //Case where path is greater
     return 1;
 }
 
@@ -46,10 +46,9 @@ void PrintRecordSortedList(SortedListPtr list){
 
   struct node* ptr = list->head;
   while(ptr != NULL){
-    printf("%s -> ", ptr->value); //%p is void format specifier                                                                                     
+    printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier                                                                                     
     ptr = ptr->next;
   }
-  printf("\n");
 }
 
 
@@ -89,7 +88,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
       printf("DIR: %s\n", dp->d_name);
       directory_handler(newpath, sortedlist);
     }
-    free(newpath);
+    //free(newpath);
 
   }
   closedir(dir);
@@ -125,7 +124,7 @@ int file_handler(char* path, SortedListPtr sortedlist){
   // printf("%s",buffer);
 
   fclose(fp);
-  free(buffer);
+  //free(buffer);
 
   return 1;
 }
@@ -147,6 +146,8 @@ int main(int argc, char** argv){
   //TKFN("This @ only tokenizes words");
   SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
   directory_handler("./homedir", sortedlist);
+  //sortedlist = finalSort(sortedlist);
   PrintRecordSortedList(sortedlist);
+  SLDestroy(sortedlist);
   return 0;
 }
