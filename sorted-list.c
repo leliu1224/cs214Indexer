@@ -1,6 +1,8 @@
 /*sorted-list.c*/
 
 #include "sorted-list.h"
+#include <stdlib.h>
+#include <string.h>
 
 /*returns a linked list node with value*/
 struct node* CreateRecord(void* newObj, char* pathname ){
@@ -206,4 +208,50 @@ int SLRemove(SortedListPtr list, void *newObj){
         ptr = ptr->next;
     }
     return 0; //Nothing to delete
+}
+
+SortedListPtr finalSort(SortedListPtr list){
+  struct node * prev = NULL;
+  struct node * current = list->head;
+  struct node * newHead;
+  while(current->next != NULL){
+    //check within the same word section
+    struct node * temp = current;
+    while(strcmp(temp->value, temp->next->value) == 0){
+      //bubble sort base on frequency value
+      while((temp->next != NULL) && (temp->refCount < temp->next->refCount)){
+        //flip the values
+        if(prev = NULL){ // starting at the head
+          newHead =  temp->next;
+          newHead->next = temp;
+          temp->next = temp->next->next;
+        }
+        else{
+          prev->next = temp->next;
+          temp->next =  temp;
+        }
+        prev =  temp;
+        temp = temp->next;
+      }
+      //bubble sort based on word order
+      while((temp->next != NULL) && (strcmp(temp->value , temp->next->value) == 1)){
+
+        //flip the values
+        if(prev = NULL){ // starting at the head
+          newHead =  temp->next;
+          newHead->next = temp;
+          temp->next = temp->next->next;
+        }
+        else{
+          prev->next = temp->next;
+          temp->next =  temp;
+        }
+        prev =  temp;
+        temp = temp->next;
+
+      }
+    }
+    prev = current;
+    current = current-> next;
+  }
 }
