@@ -148,8 +148,8 @@ int main(int argc, char** argv){
 
   //TKFN("This @ only tokenizes words");
   SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
-  //directory_handler("./homedir", sortedlist);
-  directory_handler("./NULLTEST", sortedlist);
+  directory_handler("./homedir", sortedlist);
+  //directory_handler("./NULLTEST", sortedlist);
   sortedlist = finalSort(sortedlist);
   PrintRecordSortedList(sortedlist);
   SLDestroy(sortedlist);
