@@ -196,7 +196,7 @@ int SLRemove(SortedListPtr list, char *newObj){
         //   list->head->next = newnode;
         // }
         //list->DESTRUCTOR(newnode->value);
-        //free(newnode); 
+        //free(newnode);
 
 SortedListPtr finalSort(SortedListPtr list){
   struct node * prev = NULL;
@@ -205,14 +205,15 @@ SortedListPtr finalSort(SortedListPtr list){
   while(current->next != NULL){
     //check within the same word section
     struct node * temp = current;
-    while(strcmp(temp->value, temp->next->value) == 0){
+    while((temp->next != NULL) && strcmp(temp->value, temp->next->value) == 0){
       //bubble sort base on frequency value
       while((temp->next != NULL) && (temp->refCount < temp->next->refCount)){
         //flip the values
-        if(prev = NULL){ // starting at the head
+        if(prev == NULL){ // starting at the head
           newHead =  temp->next;
-          newHead->next = temp;
           temp->next = temp->next->next;
+          newHead->next = temp;
+          list->head = newHead;
         }
         else{
           prev->next = temp->next;
@@ -221,14 +222,18 @@ SortedListPtr finalSort(SortedListPtr list){
         prev =  temp;
         temp = temp->next;
       }
-      //bubble sort based on word order
-      while((temp->next != NULL) && (strcmp(temp->value , temp->next->value) == 1)){
+      //bubble sort based on file path
+      // printf("%s\n", temp->filepath);
+      // printf("%s\n", temp->next->filepath);
+      // only do it when the different paths have the same frequency
+      while((temp->next != NULL) && (temp->refCount == temp->next->refCount) && (strcmp(temp->filepath , temp->next->filepath) > 0 )){
 
         //flip the values
-        if(prev = NULL){ // starting at the head
+        if(prev == NULL){ // starting at the head
           newHead =  temp->next;
-          newHead->next = temp;
           temp->next = temp->next->next;
+          newHead->next = temp;
+          list->head = newHead; // set a new head for the list
         }
         else{
           prev->next = temp->next;
@@ -236,10 +241,12 @@ SortedListPtr finalSort(SortedListPtr list){
         }
         prev =  temp;
         temp = temp->next;
-
       }
+      prev = temp;
+      temp = temp->next;
     }
     prev = current;
     current = current-> next;
   }
+  return list;
 }

@@ -46,7 +46,7 @@ void PrintRecordSortedList(SortedListPtr list){
 
   struct node* ptr = list->head;
   while(ptr != NULL){
-    printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier                                                                                     
+    printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
     ptr = ptr->next;
   }
 }
@@ -71,7 +71,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
 
   struct dirent* dp;
   while( (dp = readdir(dir)) != NULL ){
-    //Not NUll; get type of entry    
+    //Not NUll; get type of entry
 
     //Continue when d_name == . or ..
     if( strcmp(".", dp->d_name) == 0 || strcmp("..", dp->d_name) == 0 )
@@ -84,7 +84,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
       file_handler(newpath, sortedlist);
     }
     //If dir...call directory handler on "name+nameofdir"
-    else if(dp->d_type == DT_DIR){ 
+    else if(dp->d_type == DT_DIR){
       printf("DIR: %s\n", dp->d_name);
       directory_handler(newpath, sortedlist);
     }
@@ -99,7 +99,7 @@ int file_handler(char* path, SortedListPtr sortedlist){
   //Open file
     //Tokenize words
     //Put words into index by filename
-  
+
   FILE *fp;
   long lSize;
   char *buffer;
@@ -146,7 +146,7 @@ int main(int argc, char** argv){
   //TKFN("This @ only tokenizes words");
   SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
   directory_handler("./homedir", sortedlist);
-  //sortedlist = finalSort(sortedlist);
+  sortedlist = finalSort(sortedlist);
   PrintRecordSortedList(sortedlist);
   SLDestroy(sortedlist);
   return 0;
