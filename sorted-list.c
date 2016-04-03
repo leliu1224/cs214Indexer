@@ -5,7 +5,7 @@
 #include <string.h>
 
 /*returns a linked list node with value*/
-struct node* CreateRecord(void* newObj, char* pathname ){
+struct node* CreateRecord(char* newObj, char* pathname ){
 
     struct node* newnode = (struct node*)malloc(sizeof(struct node));
     if(newnode == NULL){
@@ -94,7 +94,7 @@ void SLDestroy(SortedListPtr list){
  */
 
 //
-int SLInsert(SortedListPtr list, void *newObj, char* pathname){
+int SLInsert(SortedListPtr list, char *newObj, char* pathname){
   struct node* newnode = CreateRecord(newObj, pathname);
 
     // Invalid node creation for some reason
@@ -169,7 +169,7 @@ int SLInsert(SortedListPtr list, void *newObj, char* pathname){
  * SLRemove should return 1 on success, and 0 on failure.
  */
 
-int SLRemove(SortedListPtr list, void *newObj){
+int SLRemove(SortedListPtr list, char *newObj){
     if( list->head == NULL){
         return 0;
     }

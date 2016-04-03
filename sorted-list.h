@@ -30,7 +30,7 @@ typedef void (*DestructFuncT)( void * );
  */
 
 struct node{
-  void* value;
+  char* value;
   struct node* next;
   int refCount;
   char * filepath;
@@ -46,7 +46,7 @@ struct SortedList
 };
 typedef struct SortedList* SortedListPtr;
 
-struct node* CreateRecord(void* newObj, char* pathname);
+struct node* CreateRecord(char* newObj, char* pathname);
 void FreeLinkedList(struct node* ptr, DestructFuncT df);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df);
@@ -64,7 +64,7 @@ void SLDestroy(SortedListPtr list);
  * Data item equality should be tested with the user's comparator function *
  */
 
-int SLInsert(SortedListPtr list, void *newObj, char* pathname);
+int SLInsert(SortedListPtr list, char* newObj, char* pathname);
 
 /*
  * SLRemove should remove 'newObj' from the SortedList in a manner that
@@ -75,7 +75,7 @@ int SLInsert(SortedListPtr list, void *newObj, char* pathname);
  * SLRemove should return 1 on success, and 0 on failure.
  */
 
-int SLRemove(SortedListPtr list, void *newObj);
+int SLRemove(SortedListPtr list, char* newObj);
 
 
 #endif
