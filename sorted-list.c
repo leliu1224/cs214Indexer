@@ -199,6 +199,9 @@ int SLRemove(SortedListPtr list, char *newObj){
         //free(newnode);
 
 SortedListPtr finalSort(SortedListPtr list){
+  if(list == NULL || list->head == NULL)
+    return NULL;
+
   struct node * prev = NULL;
   struct node * current = list->head;
   struct node * newHead;
