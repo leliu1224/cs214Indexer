@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "sorted-list.h"
-#include "tokenizer.h"
 
 int RecordComparator(struct node* p1, struct node* p2){
   struct node* r1 = (struct node*)p1;
@@ -31,6 +30,7 @@ int ComparePathHelper(char* p1, char* p2){
 
 void RecordDestructor(struct node* p1){
   free((struct node*)p1);
+  return;
 }
 
 void PrintRecordSortedList(SortedListPtr list){

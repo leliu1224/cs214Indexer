@@ -124,7 +124,7 @@ int SLInsert(SortedListPtr list, char *newObj, char* pathname){
         // }
         //list->DESTRUCTOR(newnode->value);
         //free(newnode);
-        list->DESTRUCTOR(newnode);
+        list->DESTRUCTOR(newnode->value);
 	list->head->refCount++;
         return 0;
     }
