@@ -1,4 +1,6 @@
 /*sorted-list.c*/
+/*modified to insert for a struct node for Asst3*/
+
 
 #include "sorted-list.h"
 #include <stdlib.h>
@@ -85,22 +87,19 @@ void SLDestroy(SortedListPtr list){
 int SLInsert(SortedListPtr list, char* newObj, char* pathname){
   struct node* newnode = CreateRecord(newObj, pathname);
 
-    if(newnode == NULL){
+    if(newnode == NULL)
         return 0;
-    }
 
     // If there is nothing in the SortedList yet
     if(list->head == NULL){
         list->head = newnode;
         list->head->refCount = 1;
-        list->head->filepath = pathname;
         return 1;
     }
 
-    // Check for duplicates in start of list
-    if(list->COMPARATOR(list->head, newnode) == 0){ //
+    // Check for duplicate in start of list
+    if(list->COMPARATOR(list->head, newnode) == 0){ 
         list->DESTRUCTOR(newnode);
-	//free(newnode);
 	list->head->refCount++;
         return 0;
     }
@@ -114,7 +113,6 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
 
     if(ptr != NULL && list->COMPARATOR(ptr, newnode) == 0 ){ //
         list->DESTRUCTOR(newnode);
-	//free(newnode);
 	ptr->refCount++;
         return 0; //Increment refCount, already exists in list
     }

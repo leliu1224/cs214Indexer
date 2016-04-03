@@ -4,24 +4,22 @@
 #include <string.h>
 #include "tokenizer.h"
 #include "sorted-list.h"
-//#include "listHelper.h"
 
 int RecordComparator(struct node* p1, struct node* p2){
-  struct node* r1 = (struct node*)p1;
-  struct node* r2 = (struct node*)p2;
 
-  char* word1 = (char*)r1->value;
-  char* word2 = (char*)r2->value;
+  char* word1 = (char*)p1->value;
+  char* word2 = (char*)p2->value;
 
   int x = strcmp(word1, word2);
   if(x > 0) //Iterate forward
     return -1;
   else if(x == 0) //Special case
-    return ComparePathHelper(r1->filepath, r2->filepath);
+    return ComparePathHelper(p1->filepath, p2->filepath);
   else if(x < 0) //Found spot
     return 1;
 }
 
+//When the tokens are equal, compare paths
 int ComparePathHelper(char* p1, char* p2){
   int x = strcmp(p1, p2);
 
@@ -72,9 +70,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
   }
 
   struct dirent* dp;
-  while( (dp = readdir(dir)) != NULL ){
-    //Not NUll; get type of entry
-
+  while( (dp = readdir(dir)) != NULL ){ //if not null, get type of entry
     //Continue when d_name == . or ..
     if( strcmp(".", dp->d_name) == 0 || strcmp("..", dp->d_name) == 0 )
 	continue;
@@ -128,9 +124,8 @@ int file_handler(char* path, SortedListPtr sortedlist){
   TKFN(buffer, sortedlist, path);
   // printf("%s",buffer);
 
-  fclose(fp);
   free(buffer);
-
+  fclose(fp);
   return 1;
 }
 
@@ -138,8 +133,11 @@ int file_handler(char* path, SortedListPtr sortedlist){
  *Take in path from argv[2]
  */
 int main(int argc, char** argv){
+  //if(argc != 3){
+  //  printf("Error: wrong number of arguments caught in file:%s at line: %d\n", __FILE__, __LINE__); return 0;}
   //Check for 2 arguments, i.e. if (argc != 3)
   /*is argv[2] a directory or file?
+   
    *something = opendir(argv[2]);
    *check error codes...
    *if ENOTDIR, file ; no errors, directory

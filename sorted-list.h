@@ -6,14 +6,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//No longer generic, modified for Asst3
 struct node{
   char* value;
-  //char value[256];
   char* filepath;
   int refCount;
   struct node* next;
 };
 
+//No longer generic, modified for Asst3
+//Record comparator/destructor functions in indexer.c
 typedef int (*CompareFuncT)( struct node *, struct node * );
 typedef void (*DestructFuncT)( struct node * );
 
