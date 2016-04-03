@@ -4,7 +4,54 @@
 #include <string.h>
 #include "tokenizer.h"
 #include "sorted-list.h"
-#include "listHelper.h"
+//#include "listHelper.h"
+
+int RecordComparator(struct node* p1, struct node* p2){
+  struct node* r1 = (struct node*)p1;
+  struct node* r2 = (struct node*)p2;
+
+  char* word1 = (char*)r1->value;
+  char* word2 = (char*)r2->value;
+
+  int x = strcmp(word1, word2);
+  if(x > 0)
+    return -1;
+  else if(x == 0)
+    return ComparePathHelper(r1->filepath, r2->filepath);
+  else if(x < 0)
+    return 1;
+}
+
+int ComparePathHelper(char* p1, char* p2){
+  int x = strcmp(p1, p2);
+
+  if(x < 0)
+    return -1;
+  else if(x == 0)
+    return 0;
+  else if(x > 0)
+    return 1;
+}
+
+void RecordDestructor(struct node* p1){
+  free((struct node*)p1);
+  return;
+}
+
+void PrintRecordSortedList(SortedListPtr list){
+  if(list == NULL){
+    printf("Trying to print empty list\n");
+    return;
+  }
+
+  struct node* ptr = list->head;
+  while(ptr != NULL){
+    printf("%s -> ", ptr->value); //%p is void format specifier                                                                                     
+    ptr = ptr->next;
+  }
+  printf("\n");
+}
+
 
 char* ConcatPath(char* s1, char* s2) {
   //2 extra bytes to add '/' and Null terminate

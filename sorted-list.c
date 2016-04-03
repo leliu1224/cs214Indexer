@@ -7,11 +7,11 @@
 /*returns a linked list node with value*/
 struct node* CreateRecord(char* newObj, char* pathname ){
 
-    struct node* newnode = (struct node*)malloc(sizeof(struct node));
+  struct node* newnode = (struct node*)calloc(sizeof(struct node), sizeof(struct node));
     if(newnode == NULL){
         return NULL;
     }
-    newnode->value = newObj;
+    strcpy(newnode->value, newObj);
     newnode->refCount = 1;
     newnode->filepath = pathname;
     newnode->next = NULL;
@@ -35,7 +35,6 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df){
 
     ptr->refCount--;
     if(ptr->refCount == 0){
-        df(ptr->value);
 	free(ptr);
     }
     return;
@@ -94,7 +93,7 @@ void SLDestroy(SortedListPtr list){
  */
 
 //
-int SLInsert(SortedListPtr list, char *newObj, char* pathname){
+int SLInsert(SortedListPtr list, char* newObj, char* pathname){
   struct node* newnode = CreateRecord(newObj, pathname);
 
     // Invalid node creation for some reason
@@ -111,40 +110,28 @@ int SLInsert(SortedListPtr list, char *newObj, char* pathname){
     }
 
     // Check for duplicates in start of list
-    if(list->COMPARATOR(list->head->value, newnode->value) == 0){
-        // if(list->COMPARATOR(list->head->filepath, newnode->filepath) == 0){
-        //   newnode->refCount++;
-        // }
-        // else if(list->COMPARATOR(list->head->filepath, newnode->value) == -1){
-        //   newnode->next = list->head;
-        //   list->head = newnode;
-        // }
-        // else{
-        //   list->head->next = newnode;
-        // }
-        //list->DESTRUCTOR(newnode->value);
-        //free(newnode);
-        list->DESTRUCTOR(newnode->value);
+    if(list->COMPARATOR(list->head, newnode) == 0){ //
+        list->DESTRUCTOR(newnode);
+	//free(newnode);
 	list->head->refCount++;
         return 0;
     }
 
-    // Normal insert
     struct node* ptr = list->head;
     struct node* prev = NULL;
-    while(ptr != NULL && list->COMPARATOR(newnode->value, ptr->value) == -1 ){ //First argument is smaller, iterates ptr to spot of insertion
+    while(ptr != NULL && list->COMPARATOR(newnode, ptr) == -1 ){ // //First argument is smaller, iterates ptr to spot of insertion
         prev = ptr;
         ptr = ptr->next;
     }
 
-    if(ptr != NULL && list->COMPARATOR(ptr->value, newnode->value) == 0 ){ //Duplicate
-        //list->DESTRUCTOR(newnode->value);
-        //free(newnode);
-        list->DESTRUCTOR(newnode->value);
+    if(ptr != NULL && list->COMPARATOR(ptr, newnode) == 0 ){ //
+        list->DESTRUCTOR(newnode);
+	//free(newnode);
 	ptr->refCount++;
-        return 0; //No duplicate items in list
+        return 0; //Increment refCount, already exists in list
     }
 
+    //Doesnt exist
     if(prev == NULL){ //Head of list
       newnode->next = ptr;
       list->head = newnode;
@@ -168,7 +155,7 @@ int SLInsert(SortedListPtr list, char *newObj, char* pathname){
  *
  * SLRemove should return 1 on success, and 0 on failure.
  */
-
+/*
 int SLRemove(SortedListPtr list, char *newObj){
     if( list->head == NULL){
         return 0;
@@ -213,6 +200,20 @@ int SLRemove(SortedListPtr list, char *newObj){
     }
     return 0; //Nothing to delete
 }
+*/
+
+        // if(list->COMPARATOR(list->head->filepath, newnode->filepath) == 0){
+        //   newnode->refCount++;
+        // }
+        // else if(list->COMPARATOR(list->head->filepath, newnode->value) == -1){
+        //   newnode->next = list->head;
+        //   list->head = newnode;
+        // }
+        // else{
+        //   list->head->next = newnode;
+        // }
+        //list->DESTRUCTOR(newnode->value);
+        //free(newnode); 
 
 SortedListPtr finalSort(SortedListPtr list){
   struct node * prev = NULL;

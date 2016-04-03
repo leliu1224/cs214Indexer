@@ -2,7 +2,6 @@
 #define TOKENIZER_H
 
 #include "sorted-list.h"
-
 struct TokenizerT_{
   char* inputstr;
   char* ptr;

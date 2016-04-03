@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include "tokenizer.h"
 #include "sorted-list.h"
-#include "listHelper.c"
+//#include "listHelper.c"
 
 TokenizerT *TKCreate( char * ts  ) {
 
@@ -159,7 +159,7 @@ SortedListPtr TKFN(char* input, SortedListPtr sortedlist, char* filepath){
       continue;
 
     // PrintToken(returnedtoken);
-    SLInsert(sortedlist, returnedtoken, filepath);
+    SLInsert(sortedlist, returnedtoken, filepath); //Insert based on "word" and "filepath"
 
     if(returnedtoken != NULL)
       free(returnedtoken);

@@ -6,8 +6,10 @@
 int RecordComparator(struct node* p1, struct node* p2){
   struct node* r1 = (struct node*)p1;
   struct node* r2 = (struct node*)p2;
+
   char* word1 = (char*)r1->value;
   char* word2 = (char*)r2->value;
+
   int x = strcmp(word1, word2);
   if(x > 0)
     return -1;
