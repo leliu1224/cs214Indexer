@@ -2,67 +2,43 @@
 #include <stdio.h>
 #include <string.h>
 #include "sorted-list.h"
+#include "tokenizer.h"
 
-/*Integer Sorted List Functions*/
-int IntComparator(void* p1, void* p2){
-    int* x1 = (int*)p1;
-    int* x2 = (int*)p2;
-
-    if(*x1 < *x2)
-        return -1;
-    else if(*x1 > *x2)
-        return 1;
-    else
-        return 0;
+int RecordComparator(void* p1, void* p2){
+  struct node* r1 = (struct node*)p1;
+  struct node* r2 = (struct node*)p2;
+  char* word1 = (char*)r1->value;
+  char* word2 = (char*)r2->value;
+  int x = strcmp(word1, word2);
+  if(x > 0)
+    return -1;
+  else if(x == 0)
+    return ComparePathHelper(r1->filepath, r2->filepath);
+  else if(x < 0)
+    return 1;
 }
 
-void IntDestructor(void* p1){
-    free((int*)p1);
-}
-
-void PrintSortedList(SortedListPtr list){
-    if(list == NULL){
-        printf("Trying to print empty list\n");
-        return;
-    }
-
-    struct node* ptr = list->head;
-    //printf("Printing integer sorted list...\n");
-    while(ptr != NULL){
-        int * print = ptr->value;
-        printf("%d -> ", *print); //%p is void format specifier
-        ptr = ptr->next;
-    }
-    printf("\n");
-    return;
-}
-
-/*String functions*/
-int StringComparator(void* p1, void* p2){
-  char* s1 = (char*)p1;
-  char* s2 = (char*)p2;
-
-  int x = strcmp(s1, s2);
+int ComparePathHelper(char* p1, char* p2){
+  int x = strcmp(p1, p2);
+  
   if(x < 0)
     return -1;
+  else if(x == 0)
+    return 0;
   else if(x > 0)
     return 1;
-  else
-    return 0;
 }
 
-void StringDestructor(void* p1){
-  free((char*)p1);//Cast to char first?
+void RecordDestructor(void* p1){
+  free((struct node*)p1);
 }
 
-void PrintStringSortedList(SortedListPtr list){
+void PrintRecordSortedList(SortedListPtr list){
   if(list == NULL){
     printf("Trying to print empty list\n");
     return;
   }
-
-  printf("-----------\n");
-  printf("Printing STRING sorted list...\n");
+  
   struct node* ptr = list->head;
   while(ptr != NULL){
     char* print = ptr->value;
@@ -70,8 +46,6 @@ void PrintStringSortedList(SortedListPtr list){
     ptr = ptr->next;
   }
   printf("\n");
-  printf("-----------\n");
-  return;
 }
 
 /*

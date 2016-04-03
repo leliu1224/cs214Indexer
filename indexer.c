@@ -3,8 +3,10 @@
 #include <dirent.h>
 #include <string.h>
 #include "tokenizer.h"
+#include "sorted-list.h"
+#include "listHelper.h"
 
-char* ConcatPath(char* s1, char* s2){
+char* ConcatPath(char* s1, char* s2) {
   //2 extra bytes to add '/' and Null terminate
   char* newstring = calloc(strlen(s1)+strlen(s2)+1+1, 1);
   strcpy(newstring, s1);
@@ -14,7 +16,7 @@ char* ConcatPath(char* s1, char* s2){
   return newstring; //Remember to free this
 }
 
-int directory_handler(char* path){
+int directory_handler(char* path, SortedListPtr sortedlist){
 
   DIR* dir = opendir(path);
   if(dir == NULL){ //Error opening dir, return
@@ -33,12 +35,12 @@ int directory_handler(char* path){
     //If file...call file handler on "name+nameoffile"
     if(dp->d_type == DT_REG){
       printf("FILE: %s\n", dp->d_name);
-      file_handler(newpath);
+      file_handler(newpath, sortedlist);
     }
     //If dir...call directory handler on "name+nameofdir"
     else if(dp->d_type == DT_DIR){ 
       printf("DIR: %s\n", dp->d_name);
-      directory_handler(newpath);
+      directory_handler(newpath, sortedlist);
     }
     free(newpath);
 
@@ -47,7 +49,7 @@ int directory_handler(char* path){
   return 1;
 }
 
-int file_handler(char* path){
+int file_handler(char* path, SortedListPtr sortedlist){
   //Open file
     //Tokenize words
     //Put words into index by filename
@@ -72,14 +74,11 @@ int file_handler(char* path){
     fclose(fp),free(buffer),fputs("entire read fails",stderr),exit(1);
 
   /* do your work here, buffer is a string contains the whole text */
-  TKFN(buffer);
+  TKFN(buffer, sortedlist, path);
   // printf("%s",buffer);
 
   fclose(fp);
   free(buffer);
-
-
-
 
   return 1;
 }
@@ -99,6 +98,8 @@ int main(int argc, char** argv){
    */
 
   //TKFN("This @ only tokenizes words");
-  directory_handler("./homedir");
+  SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
+  directory_handler("./homedir", sortedlist);
+  PrintRecordSortedList(sortedlist);
   return 0;
 }

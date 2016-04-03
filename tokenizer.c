@@ -141,7 +141,7 @@ int PrintToken(char* str){
  * Each token should be printed on a separate line.
  * Instantiate and return the sorted list
  */
-SortedListPtr TKFN(char* input){
+SortedListPtr TKFN(char* input, SortedListPtr sortedlist, char* filepath){
   if(input == NULL){
     printf("Trying to tokenize NULL String\n");
     return NULL;
@@ -159,19 +159,18 @@ SortedListPtr TKFN(char* input){
       continue;
 
     // PrintToken(returnedtoken);
-    // processToken(returnedtoken, list, filepath);
+    SLInsert(sortedlist, returnedtoken, filepath);
 
     if(returnedtoken != NULL)
       free(returnedtoken);
   }
 
-  SortedListPtr sortedList =  SLCreate(StringComparator, StringDestructor);
   TKDestroy(tokenizer);
-  return sortedList;
+  return sortedlist;
 }
 
-void processToken(char * token, SortedListPtr list, char * filepath){
-
-// takes token, check if it's in sorted list, compare token and also filepath
+/*void processToken(char * token, SortedListPtr sortedlist, char * filepath){
+  SLInsert(sortedlist, (void)token, filepath);  
+  // takes token, check if it's in sorted list, compare token and also filepath
   // increment the count by 1 or add a new node to the sorted list
-}
+}*/

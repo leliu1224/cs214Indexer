@@ -1,8 +1,7 @@
-int IntComparator(void* p1, void* p2);
-void IntDestructor(void* p1);
-void PrintSortedList(SortedListPtr list);
+#include "sorted-list.h"
+#include "tokenizer.h"
 
-
-int StringComparator(void* p1, void* p2);
-void StringDestructor(void* p1);
-void PrintStringSortedList(SortedListPtr list);
+int RecordComparator(void* p1, void* p2);
+int ComparePathHelper(char* p1, char* p2);
+void RecordDestructor(void* p1);
+void PrintRecordSortedList(SortedListPtr list);

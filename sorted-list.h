@@ -30,7 +30,7 @@ typedef void (*DestructFuncT)( void * );
  */
 
 struct node{
-  void * value;
+  void* value;
   struct node* next;
   int refCount;
   char * filepath;
