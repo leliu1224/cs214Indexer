@@ -111,7 +111,7 @@ int SLInsert(SortedListPtr list, char *newObj, char* pathname){
     }
 
     // Check for duplicates in start of list
-    if(list->COMPARATOR(list->head, newnode) == 0){
+    if(list->COMPARATOR(list->head->value, newnode->value) == 0){
         // if(list->COMPARATOR(list->head->filepath, newnode->filepath) == 0){
         //   newnode->refCount++;
         // }
@@ -132,15 +132,15 @@ int SLInsert(SortedListPtr list, char *newObj, char* pathname){
     // Normal insert
     struct node* ptr = list->head;
     struct node* prev = NULL;
-    while(ptr != NULL && list->COMPARATOR(newnode, ptr) == -1 ){ //First argument is smaller, iterates ptr to spot of insertion
+    while(ptr != NULL && list->COMPARATOR(newnode->value, ptr->value) == -1 ){ //First argument is smaller, iterates ptr to spot of insertion
         prev = ptr;
         ptr = ptr->next;
     }
 
-    if(ptr != NULL && list->COMPARATOR(ptr, newnode) == 0 ){ //Duplicate
+    if(ptr != NULL && list->COMPARATOR(ptr->value, newnode->value) == 0 ){ //Duplicate
         //list->DESTRUCTOR(newnode->value);
         //free(newnode);
-        list->DESTRUCTOR(newnode);
+        list->DESTRUCTOR(newnode->value);
 	ptr->refCount++;
         return 0; //No duplicate items in list
     }

@@ -22,8 +22,8 @@
  *  destruct function will do nothing.
  */
 
-typedef int (*CompareFuncT)( void *, void * );
-typedef void (*DestructFuncT)( void * );
+typedef int (*CompareFuncT)( char*, char* );
+typedef void (*DestructFuncT)( char* );
 
 /*
  * Sorted list type that will hold all the data to be sorted.
