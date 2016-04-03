@@ -7,13 +7,20 @@
 /*returns a linked list node with value*/
 struct node* CreateRecord(char* newObj, char* pathname ){
 
-  struct node* newnode = (struct node*)calloc(sizeof(struct node), sizeof(struct node));
+  struct node* newnode = (struct node*)malloc(sizeof(struct node));
     if(newnode == NULL)
         return NULL;
+    
+    
+    newnode->value = malloc(sizeof(strlen(newObj)) + 1 );
+    newnode->filepath = malloc(sizeof(strlen(pathname))  + 1);
 
     strcpy(newnode->value, newObj);
+    newnode->value[strlen(newObj)] = '\0';
+    strcpy(newnode->filepath, pathname);
+    newnode->filepath[strlen(pathname)] = '\0';
     //newnode->value = newObj;
-    newnode->filepath = pathname;
+    //newnode->filepath = pathname;
     newnode->refCount = 1;
     newnode->next = NULL;
 
@@ -34,10 +41,8 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df){
         FreeLinkedList(ptr->next, df);
     }
 
-    ptr->refCount--;
-    if(ptr->refCount == 0){
-	free(ptr);
-    }
+    df(ptr);
+   
     return;
 }
 
@@ -73,7 +78,7 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
 void SLDestroy(SortedListPtr list){
   if(list != NULL){
     FreeLinkedList(list->head, list->DESTRUCTOR); //Free Linked List before freeing SortedList
-    free(list);
+    free(list); 
   }
 }
 
@@ -128,75 +133,6 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
     }
     return 1;
 }
-
-
-/*---------------------------------------------------------------------------------------------
- * SLRemove should remove 'newObj' from the SortedList in a manner that
- *   maintains list order.
- *
- * SLRemove must not modify the data item pointed to by 'newObj'.
- *
- * SLRemove should return 1 on success, and 0 on failure.
- */
-/*
-int SLRemove(SortedListPtr list, char *newObj){
-    if( list->head == NULL){
-        return 0;
-    }
-
-    struct node* ptr = list->head;
-    if(list->COMPARATOR(list->head->value, newObj) == 0){
-        struct node* temp = list->head;
-        if(list->head->next != NULL){
-            list->head = list->head->next;
-            list->head->refCount--; //Subtract ref count
-            if(list->head->refCount == 0)
-                list->DESTRUCTOR(temp->value); //Destroy the node IF AND ONLY IF REFCOUNT IS 0
-            free(temp);
-	    return 1;
-        }
-        else{
-            list->head->refCount--;
-            if(list->head->refCount == 0){
-                list->DESTRUCTOR(temp->value);
-		free(temp);
-	    }
-            list->head = NULL;
-            return 1;
-        }
-    }
-    while(ptr->next != NULL ){
-        if(list->COMPARATOR(ptr->next->value, newObj) == 0 ){//Found node to delete
-            struct node* temp = ptr->next; //Node to be deleted
-            ptr->next = temp->next; //Set ptr->next to the next of the to be deleted node
-            temp->refCount--;
-            if(ptr->next != NULL){
-                ptr->next->refCount++;
-            }
-            if(temp->refCount == 0){
-                list->DESTRUCTOR(temp->value);	//Destroy the note IF AND ONLY IF REFCOUNT IS 0
-		free(temp);
-	    }
-            return 1;
-        }
-        ptr = ptr->next;
-    }
-    return 0; //Nothing to delete
-}
-*/
-
-        // if(list->COMPARATOR(list->head->filepath, newnode->filepath) == 0){
-        //   newnode->refCount++;
-        // }
-        // else if(list->COMPARATOR(list->head->filepath, newnode->value) == -1){
-        //   newnode->next = list->head;
-        //   list->head = newnode;
-        // }
-        // else{
-        //   list->head->next = newnode;
-        // }
-        //list->DESTRUCTOR(newnode->value);
-        //free(newnode);
 
 SortedListPtr finalSort(SortedListPtr list){
   if(list == NULL || list->head == NULL)

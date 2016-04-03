@@ -34,7 +34,9 @@ int ComparePathHelper(char* p1, char* p2){
 }
 
 void RecordDestructor(struct node* p1){
-  free((struct node*)p1);
+  free(p1->value); //Free members before freeing the node itself
+  free(p1->filepath);
+  free(p1);
   return;
 }
 
@@ -88,7 +90,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
       printf("DIR: %s\n", dp->d_name);
       directory_handler(newpath, sortedlist);
     }
-    //free(newpath);
+    free(newpath);
 
   }
   closedir(dir);
@@ -127,7 +129,7 @@ int file_handler(char* path, SortedListPtr sortedlist){
   // printf("%s",buffer);
 
   fclose(fp);
-  //free(buffer);
+  free(buffer);
 
   return 1;
 }

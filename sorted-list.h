@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 struct node{
-  //char* value;
-  char value[256];
+  char* value;
+  //char value[256];
   char* filepath;
   int refCount;
   struct node* next;
@@ -32,9 +32,7 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df);
 void SLDestroy(SortedListPtr list);
-
 int SLInsert(SortedListPtr list, char* newObj, char* pathname);
-//int SLRemove(SortedListPtr list, char* newObj);
 
 SortedListPtr finalSort(SortedListPtr list);
 
