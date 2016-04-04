@@ -133,9 +133,10 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
 }
 
 SortedListPtr finalSort(SortedListPtr list){
-  if(list == NULL || list->head == NULL)
+  if(list == NULL || list->head == NULL){
+    printf("cant sort empty list\n");
     return NULL;
-
+  }
   struct node * prev = NULL;
   struct node * current = list->head;
   struct node * newHead;

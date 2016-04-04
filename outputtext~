@@ -1,0 +1,8 @@
+A resides in path: "./homedir/adir/baa"  with count 1
+A resides in path: "./homedir/adir/boo"  with count 1
+Baa resides in path: "./homedir/adir/baa"  with count 1
+Boo resides in path: "./homedir/adir/boo"  with count 1
+cat resides in path: "./homedir/adir/baa"  with count 1
+dog resides in path: "./homedir/adir/boo"  with count 1
+name resides in path: "./homedir/adir/boo"  with count 2
+name resides in path: "./homedir/adir/baa"  with count 1
