@@ -154,7 +154,8 @@ int main(int argc, char** argv){
     return 0;}
   
   FILE* OUTPUT = NULL;
-  if(  (fopen(argv[1], "r")) != NULL){ //Check if output file already exists, does user wish to overwrite?
+  FILE* closeme = NULL;
+  if(  (closeme = (fopen(argv[1], "r"))) != NULL){ //Check if output file already exists, does user wish to overwrite?
 
     printf("File already exists. Would you like to overwrite the file: %s?\n", argv[1]);
     printf("Enter '0' if you dont want to overwrite\n");printf("Enter '1' if you want overwrite the file\n");
@@ -176,7 +177,7 @@ int main(int argc, char** argv){
   OUTPUT = fopen(argv[1], "w"); //Open argv[1] in writemode, referenced by FILE* OUTPUT.
  
   if(OUTPUT == NULL){
-    printf("Failed to open output file in write mode\n");exit(1);
+    printf("Failed to open output file in write mode\n");fclose(closeme);exit(1);
   }
 
   /*is argv[2] a directory or file?
@@ -193,7 +194,8 @@ int main(int argc, char** argv){
     file_handler(argv[2], sortedlist);
   }
   else if(errno == ENOENT){
-    SLDestroy(sortedlist);fclose(OUTPUT);closedir(CHECKERRNO);printf("CAUGHT ERROR. CANNOT OPEN NONEXISTING FILE/DIR\n");exit(1);
+    SLDestroy(sortedlist);fclose(OUTPUT);fclose(closeme);closedir(CHECKERRNO);
+    printf("CAUGHT ERROR. CANNOT OPEN NONEXISTING FILE/DIR\n");exit(1);
   }
   else{
     directory_handler(argv[2], sortedlist);
@@ -207,6 +209,7 @@ int main(int argc, char** argv){
 
   SLDestroy(sortedlist);
   fclose(OUTPUT);
+  fclose(closeme);
   closedir(CHECKERRNO);
   return 0;
 }
