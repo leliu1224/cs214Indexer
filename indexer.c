@@ -210,6 +210,7 @@ int main(int argc, char** argv){
   SLDestroy(sortedlist);
   fclose(OUTPUT);
   fclose(closeme);
-  closedir(CHECKERRNO);
+  if(CHECKERRNO)
+    closedir(CHECKERRNO);
   return 0;
 }
