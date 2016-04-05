@@ -247,7 +247,8 @@ int main(int argc, char** argv){
 
   SLDestroy(sortedlist);
   fclose(OUTPUT);
-  fclose(closeme);
+  if(closeme)
+    fclose(closeme);
   if(CHECKERRNO)
     closedir(CHECKERRNO);
   return 0;
