@@ -40,16 +40,35 @@ void RecordDestructor(struct node* p1){
 }
 
 void PrintRecordSortedList(SortedListPtr list){
-  if(list == NULL){
+  if(list == NULL || list->head == NULL){
     printf("Trying to print empty list\n");
     return;
   }
-
+  struct node* prev = NULL;
   struct node* ptr = list->head;
-  while(ptr != NULL){
-    printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
-    ptr = ptr->next;
-  }
+  printf("{\"list\" : [\n");  
+  printf("\t{\"%s\" : [\n", ptr->value);
+
+  do{ //Fix commas...
+    if(prev != NULL){
+      if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
+	printf("\t]}\n");
+	printf("\t{\"%s\" : [\n", ptr->value);
+	printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+	prev = ptr;
+	ptr = ptr->next;
+	continue;
+      }
+    }
+    printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+    prev = ptr;
+    ptr = ptr->next; 
+    if(ptr == NULL)
+      printf("\t]}\n");
+  }while(ptr != NULL);
+
+  printf("]}\n");
+  //printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
 }
 
 
@@ -128,16 +147,35 @@ int file_handler(char* path, SortedListPtr sortedlist){
 }
 
 void WRITEFILE( FILE* OUTPUT, SortedListPtr list){
-  if(list == NULL){
-    printf("WRITEFILE error: Trying to write with empty list\n");
+  if(list == NULL || list->head == NULL){
+    printf("WRITEFILE ERROR: Trying to write empty list\n");
     return;
   }
-
+  struct node* prev = NULL;
   struct node* ptr = list->head;
-  while(ptr != NULL){
-    fprintf(OUTPUT, "%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
-    ptr = ptr->next;
-  }
+  fprintf(OUTPUT, "{\"list\" : [\n");  
+  fprintf(OUTPUT, "\t{\"%s\" : [\n", ptr->value);
+
+  do{ //Fix commas... 
+    if(prev != NULL){
+      if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
+	fprintf(OUTPUT, "\t]}\n");
+	fprintf(OUTPUT, "\t{\"%s\" : [\n", ptr->value);
+	fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+	prev = ptr;
+	ptr = ptr->next;
+	continue;
+      }
+    }
+    fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+    prev = ptr;
+    ptr = ptr->next; 
+    if(ptr == NULL)
+      fprintf(OUTPUT, "\t]}\n");
+  }while(ptr != NULL);
+
+  fprintf(OUTPUT, "]}\n");
+
   printf("WRITEFILE success... check your output file\n");
   return;
 }
