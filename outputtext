@@ -1,22 +1,22 @@
 {"list" : [
 	{"A" : [
-		{"./homedir/adir/baa" : 1}
-		{"./homedir/adir/boo" : 1}
+		{"baa" : 1}
+		{"boo" : 1}
 	]}
 	{"Baa" : [
-		{"./homedir/adir/baa" : 1}
+		{"baa" : 1}
 	]}
 	{"Boo" : [
-		{"./homedir/adir/boo" : 1}
+		{"boo" : 1}
 	]}
 	{"cat" : [
-		{"./homedir/adir/baa" : 1}
+		{"baa" : 1}
 	]}
 	{"dog" : [
-		{"./homedir/adir/boo" : 1}
+		{"boo" : 1}
 	]}
 	{"name" : [
-		{"./homedir/adir/boo" : 2}
-		{"./homedir/adir/baa" : 1}
+		{"boo" : 2}
+		{"baa" : 1}
 	]}
 ]}

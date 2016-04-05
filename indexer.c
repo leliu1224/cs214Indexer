@@ -86,6 +86,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
 
   DIR* dir = opendir(path);
   if(dir == NULL){ //Error opening dir, return
+    printf("Failed to opendir\n");
     return 0;
   }
 
@@ -99,7 +100,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
     //If file...call file handler on "name+nameoffile"
     if(dp->d_type == DT_REG){
       printf("FILE: %s\n", dp->d_name);
-      file_handler(newpath, sortedlist);
+      file_handler(dp->d_name, newpath, sortedlist);
     }
     //If dir...call directory handler on "name+nameofdir"
     else if(dp->d_type == DT_DIR){
@@ -113,7 +114,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
   return 1;
 }
 
-int file_handler(char* path, SortedListPtr sortedlist){
+int file_handler(char* filename, char* path, SortedListPtr sortedlist){
   //Open file, Tokenize words, Put words into index by filename
   FILE *fp;
   long lSize;
@@ -138,7 +139,7 @@ int file_handler(char* path, SortedListPtr sortedlist){
     fclose(fp),free(buffer);printf("fread failed in %s at line %d, caused by filepath: \"%s\"\n", __FILE__,__LINE__, path);return 0; }
 
   /* do your work here, buffer is a string contains the whole text */
-  TKFN(buffer, sortedlist, path);
+  TKFN(buffer, sortedlist, filename);
   // printf("%s",buffer);
 
   free(buffer);
@@ -229,7 +230,7 @@ int main(int argc, char** argv){
   errno = 0;
   DIR* CHECKERRNO = opendir(argv[2]);
   if(errno == ENOTDIR){
-    file_handler(argv[2], sortedlist);
+    file_handler(argv[2], argv[2], sortedlist);
   }
   else if(errno == ENOENT){
     SLDestroy(sortedlist);fclose(OUTPUT);fclose(closeme);closedir(CHECKERRNO);
