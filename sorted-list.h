@@ -34,6 +34,7 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df);
 
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df);
 void SLDestroy(SortedListPtr list);
+int EqualValue_Count(struct node* p1, struct node* p2);
 int SLInsert(SortedListPtr list, char* newObj, char* pathname);
 
 SortedListPtr finalSort(SortedListPtr list);

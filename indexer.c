@@ -15,14 +15,16 @@ int RecordComparator(struct node* p1, struct node* p2){
   if(x > 0) //Iterate forward
     return -1;
   else if(x == 0) //Special case
-    return ComparePathHelper(p1->filepath, p2->filepath);
+    return ComparePathHelper(p1, p2);
   else if(x < 0) //Found spot
     return 1;
 }
 
 //When the tokens are equal, compare paths
-int ComparePathHelper(char* p1, char* p2){
-  int x = strcmp(p1, p2);
+int ComparePathHelper(struct node* p1, struct node* p2){
+  
+  int x = strcmp(p1->filepath, p2->filepath);
+  //int x = p1->refCount - p2->refCount;
 
   if(x < 0) //Case where path is less
     return -1;
@@ -46,13 +48,13 @@ void PrintRecordSortedList(SortedListPtr list){
   }
   struct node* prev = NULL;
   struct node* ptr = list->head;
-  printf("{\"list\" : [\n");  
+  printf("{\"list\" : [\n");  //start list
   printf("\t{\"%s\" : [\n", ptr->value);
 
   do{ //Fix commas...
     if(prev != NULL){
       if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
-	printf("\t]}\n");
+	printf("\t]},\n");
 	printf("\t{\"%s\" : [\n", ptr->value);
 	printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
 	prev = ptr;
@@ -62,7 +64,9 @@ void PrintRecordSortedList(SortedListPtr list){
     }
     printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
     prev = ptr;
-    ptr = ptr->next; 
+    ptr = ptr->next;
+
+
     if(ptr == NULL)
       printf("\t]}\n");
   }while(ptr != NULL);
@@ -115,6 +119,7 @@ int directory_handler(char* path, SortedListPtr sortedlist){
 }
 
 int file_handler(char* filename, char* path, SortedListPtr sortedlist){
+  //Takes in filename, the path to get to the file, and the list as args
   //Open file, Tokenize words, Put words into index by filename
   FILE *fp;
   long lSize;
@@ -234,20 +239,19 @@ int main(int argc, char** argv){
   }
   else if(errno == ENOENT){
     SLDestroy(sortedlist);fclose(OUTPUT);fclose(closeme);closedir(CHECKERRNO);
-    printf("CAUGHT ERROR. CANNOT OPEN NONEXISTING FILE/DIR\n");exit(1);
+    printf("ENOENT Error. Cannot open NONEXISTING file/dir\n");exit(1);
   }
   else{
     directory_handler(argv[2], sortedlist);
   }
 
-  //directory_handler("./homedir", sortedlist);
-  //directory_handler("./NULLTEST", sortedlist);
-  sortedlist = finalSort(sortedlist);
-  WRITEFILE(OUTPUT, sortedlist);
-  //PrintRecordSortedList(sortedlist);
+  sortedlist = finalSort(sortedlist); //INFINITE LOOP still
+  //WRITEFILE(OUTPUT, sortedlist); Copy Print Function into WRITEFILE when done
+  PrintRecordSortedList(sortedlist);
 
   SLDestroy(sortedlist);
-  fclose(OUTPUT);
+  if(OUTPUT)
+    fclose(OUTPUT);
   if(closeme)
     fclose(closeme);
   if(CHECKERRNO)

@@ -84,6 +84,17 @@ void SLDestroy(SortedListPtr list){
   }
 }
 
+int EqualValue_Count(struct node* p1, struct node* p2){ //unused
+  int x = strcmp(p1->value, p2->value);
+  int y = p1->refCount - p2->refCount;
+  if(x != 0)
+    return 0;
+  if(y != 0)
+    return 0;
+  return 1; //Equality
+}
+
+
 int SLInsert(SortedListPtr list, char* newObj, char* pathname){
   struct node* newnode = CreateRecord(newObj, pathname);
 
@@ -104,33 +115,56 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
         return 0;
     }
 
+    struct node* beforeprev = NULL;  //Used to maintain list order
+    struct node* prev = NULL;  //Used to insert and maintain list order
     struct node* ptr = list->head;
-    struct node* prev = NULL;
-    while(ptr != NULL && list->COMPARATOR(newnode, ptr) == -1  ){ // //First argument is smaller, iterates ptr to spot of insertion
-        prev = ptr;
-        ptr = ptr->next;
+    
+    while (ptr != NULL && list->COMPARATOR(newnode, ptr) == -1  ) { // //First argument is smaller, iterates ptr to spot of insertion
+        beforeprev = prev;
+	prev = ptr;
+	ptr = ptr->next;	     
     }
+       
 
     if(ptr != NULL && list->COMPARATOR(ptr, newnode) == 0 ){ //
         list->DESTRUCTOR(newnode);
-	ptr->refCount++;
-        return 0; //Increment refCount, already exists in list
+	ptr->refCount++; //Increment refCount, already exists in list
+	//Check if list is now out of order BUT ONLY IF PREV IS NOT NULL,	
+	/********************************************************************/
+	/*
+	//while(?){ //Loop this somehow??, while iterating before, store the node before the nodes with equal counts and equal value?
+	//Insert newnode BEFORE that node...      x+1 x+1 x x x+1 -> x+1 x+1 x+1 x x? but this problem keeps occurring. maybe need to sort 
+	if(prev != NULL && strcmp(prev->value, ptr->value) == 0 && prev->refCount < ptr->refCount){ //swap ptr and prev if out of order //prev wont be null
+	  struct node* after = ptr->next; 
+	  ptr->next = prev;
+	  prev->next = after;
+	  if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr
+	    beforeprev->next = ptr;
+	  ptr = ptr->next;
+	}
+	
+	//}
+	*/
+        return 0;  
     }
 
-    //Doesnt exist
-    if(prev == NULL){ //Head of list
+    
+    if(prev == NULL){ //Head of list, prev is null
       newnode->next = ptr;
       list->head = newnode;
     }
-    else if(ptr != NULL){ //Middle of list
+    else if(ptr != NULL){ //Middle of list, ptr is not at end
       prev->next = newnode;
       newnode->next = ptr;
     }
-    else{ //End of list
+    else{ //End of list, ptr is NULL
       prev->next = newnode;
     }
+
+
     return 1;
 }
+
 
 SortedListPtr finalSort(SortedListPtr list){
   if(list == NULL || list->head == NULL){
@@ -188,3 +222,4 @@ SortedListPtr finalSort(SortedListPtr list){
   }
   return list;
 }
+
