@@ -174,10 +174,10 @@ SortedListPtr finalSort(SortedListPtr list){
   struct node * prev = NULL;
   struct node * current = list->head;
   struct node * newHead;
+  int stuffMoved = 0;
   while(current->next != NULL){
     //check within the same word section
     struct node * temp = current;
-    int stuffMoved = 0;
     while((temp != NULL) && (temp->next != NULL) && strcmp(temp->value, temp->next->value) == 0){
 
       //bubble sort base on frequency value
