@@ -12,8 +12,8 @@ struct node* CreateRecord(char* newObj, char* pathname ){
   struct node* newnode = (struct node*)malloc(sizeof(struct node));
     if(newnode == NULL)
         return NULL;
-    
-    
+
+
     newnode->value = malloc(sizeof(strlen(newObj)) + 1 );
     newnode->filepath = malloc(sizeof(strlen(pathname))  + 1);
 
@@ -44,7 +44,7 @@ void FreeLinkedList(struct node* ptr, DestructFuncT df){
     }
 
     df(ptr);
-   
+
     return;
 }
 
@@ -80,7 +80,7 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
 void SLDestroy(SortedListPtr list){
   if(list != NULL){
     FreeLinkedList(list->head, list->DESTRUCTOR); //Free Linked List before freeing SortedList
-    free(list); 
+    free(list);
   }
 }
 
@@ -109,7 +109,7 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
     }
 
     // Check for duplicate in start of list
-    if(list->COMPARATOR(list->head, newnode) == 0){ 
+    if(list->COMPARATOR(list->head, newnode) == 0){
         list->DESTRUCTOR(newnode);
 	list->head->refCount++;
         return 0;
@@ -118,37 +118,37 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
     struct node* beforeprev = NULL;  //Used to maintain list order
     struct node* prev = NULL;  //Used to insert and maintain list order
     struct node* ptr = list->head;
-    
+
     while (ptr != NULL && list->COMPARATOR(newnode, ptr) == -1  ) { // //First argument is smaller, iterates ptr to spot of insertion
         beforeprev = prev;
 	prev = ptr;
-	ptr = ptr->next;	     
+	ptr = ptr->next;
     }
-       
+
 
     if(ptr != NULL && list->COMPARATOR(ptr, newnode) == 0 ){ //
         list->DESTRUCTOR(newnode);
 	ptr->refCount++; //Increment refCount, already exists in list
-	//Check if list is now out of order BUT ONLY IF PREV IS NOT NULL,	
+	//Check if list is now out of order BUT ONLY IF PREV IS NOT NULL,
 	/********************************************************************/
 	/*
 	//while(?){ //Loop this somehow??, while iterating before, store the node before the nodes with equal counts and equal value?
-	//Insert newnode BEFORE that node...      x+1 x+1 x x x+1 -> x+1 x+1 x+1 x x? but this problem keeps occurring. maybe need to sort 
+	//Insert newnode BEFORE that node...      x+1 x+1 x x x+1 -> x+1 x+1 x+1 x x? but this problem keeps occurring. maybe need to sort
 	if(prev != NULL && strcmp(prev->value, ptr->value) == 0 && prev->refCount < ptr->refCount){ //swap ptr and prev if out of order //prev wont be null
-	  struct node* after = ptr->next; 
+	  struct node* after = ptr->next;
 	  ptr->next = prev;
 	  prev->next = after;
 	  if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr
 	    beforeprev->next = ptr;
 	  ptr = ptr->next;
 	}
-	
+
 	//}
 	*/
-        return 0;  
+        return 0;
     }
 
-    
+
     if(prev == NULL){ //Head of list, prev is null
       newnode->next = ptr;
       list->head = newnode;
@@ -177,28 +177,33 @@ SortedListPtr finalSort(SortedListPtr list){
   while(current->next != NULL){
     //check within the same word section
     struct node * temp = current;
-    while((temp->next != NULL) && strcmp(temp->value, temp->next->value) == 0){
+    int stuffMoved = 0;
+    while((temp != NULL) && (temp->next != NULL) && strcmp(temp->value, temp->next->value) == 0){
+
       //bubble sort base on frequency value
-      while((temp->next != NULL) && (temp->refCount < temp->next->refCount)){
+      if((temp->next != NULL) && (temp->refCount < temp->next->refCount)){
         //flip the values
         if(prev == NULL){ // starting at the head
           newHead =  temp->next;
           temp->next = temp->next->next;
           newHead->next = temp;
           list->head = newHead;
+          current = list->head;
+          stuffMoved = 1;
         }
         else{
           prev->next = temp->next;
-          temp->next =  temp;
+          temp->next = temp->next->next;
+          prev->next->next =  temp;
+          stuffMoved = 1;
         }
-        prev =  temp;
-        temp = temp->next;
       }
+
       //bubble sort based on file path
-      // printf("%s\n", temp->filepath);
-      // printf("%s\n", temp->next->filepath);
       // only do it when the different paths have the same frequency
-      while((temp->next != NULL) && (temp->refCount == temp->next->refCount) && (strcmp(temp->filepath , temp->next->filepath) > 0 )){
+      else if((temp->next != NULL) &&
+        (temp->refCount == temp->next->refCount) &&
+        (strcmp(temp->filepath , temp->next->filepath) > 0 )){
 
         //flip the values
         if(prev == NULL){ // starting at the head
@@ -206,19 +211,30 @@ SortedListPtr finalSort(SortedListPtr list){
           temp->next = temp->next->next;
           newHead->next = temp;
           list->head = newHead; // set a new head for the list
+          current = list->head;
+          stuffMoved = 1;
         }
         else{
           prev->next = temp->next;
-          temp->next =  temp;
+          temp->next = temp->next->next;
+          prev->next->next =  temp;
+          stuffMoved = 1;
         }
-        prev =  temp;
-        temp = temp->next;
       }
       prev = temp;
       temp = temp->next;
     }
+
+    // start sorting from the first the beginning if you reach the end after list was changed during sorting
     prev = current;
     current = current-> next;
+    if((stuffMoved == 0) && current->next == NULL){
+      break;
+    }
+    else if(current->next == NULL){
+      current =  list->head;
+      stuffMoved = 0;
+    }
   }
   return list;
 }
