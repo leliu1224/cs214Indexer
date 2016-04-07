@@ -22,7 +22,7 @@ int RecordComparator(struct node* p1, struct node* p2){
 
 //When the tokens are equal, compare paths
 int ComparePathHelper(struct node* p1, struct node* p2){
-  
+
   int x = strcmp(p1->filepath, p2->filepath);
   //int x = p1->refCount - p2->refCount;
 
@@ -54,22 +54,28 @@ void PrintRecordSortedList(SortedListPtr list){
   do{ //Fix commas...
     if(prev != NULL){
       if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
-	printf("\t]},\n");
-	printf("\t{\"%s\" : [\n", ptr->value);
-	printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
-	prev = ptr;
-	ptr = ptr->next;
-	continue;
-      }
+       printf("\t]},\n");
+       printf("\t{\"%s\" : [\n", ptr->value);
+       if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+         printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+       else
+        printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+      prev = ptr;
+      ptr = ptr->next;
+      continue;
     }
+  }
+  if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+    printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+  else
     printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
-    prev = ptr;
-    ptr = ptr->next;
+  prev = ptr;
+  ptr = ptr->next;
 
 
-    if(ptr == NULL)
-      printf("\t]}\n");
-  }while(ptr != NULL);
+  if(ptr == NULL)
+    printf("\t]}\n");
+}while(ptr != NULL);
 
   printf("]}\n");
   //printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
@@ -135,7 +141,7 @@ int file_handler(char* filename, char* path, SortedListPtr sortedlist){
   rewind( fp );
 
   /* allocate memory for entire content */
-  buffer = calloc( 1, lSize+1 ); 
+  buffer = calloc( 1, lSize+1 );
   if( !buffer ){ //Error check
     fclose(fp);printf("malloc failed in %s at line %d\n", __FILE__,__LINE__);return 0; }
 
@@ -159,10 +165,10 @@ void WRITEFILE( FILE* OUTPUT, SortedListPtr list){
   }
   struct node* prev = NULL;
   struct node* ptr = list->head;
-  fprintf(OUTPUT, "{\"list\" : [\n");  
+  fprintf(OUTPUT, "{\"list\" : [\n");
   fprintf(OUTPUT, "\t{\"%s\" : [\n", ptr->value);
 
-  do{ //Fix commas... 
+  do{ //Fix commas...
     if(prev != NULL){
       if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
 	fprintf(OUTPUT, "\t]}\n");
@@ -175,7 +181,7 @@ void WRITEFILE( FILE* OUTPUT, SortedListPtr list){
     }
     fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
     prev = ptr;
-    ptr = ptr->next; 
+    ptr = ptr->next;
     if(ptr == NULL)
       fprintf(OUTPUT, "\t]}\n");
   }while(ptr != NULL);
@@ -196,7 +202,7 @@ int main(int argc, char** argv){
     printf("Error: wrong number of arguments caught in file:%s at line: %d\n", __FILE__, __LINE__);
     printf("Please give input in the format \"./index <output name> <dir or file>\"\n");
     return 0;}
-  
+
   FILE* OUTPUT = NULL;
   FILE* closeme = NULL;
   if(  (closeme = (fopen(argv[1], "r"))) != NULL){ //Check if output file already exists, does user wish to overwrite?
@@ -217,9 +223,9 @@ int main(int argc, char** argv){
       exit(1);
     }
   }
- 
+
   OUTPUT = fopen(argv[1], "w"); //Open argv[1] in writemode, referenced by FILE* OUTPUT.
- 
+
   if(OUTPUT == NULL){
     printf("Failed to open output file in write mode\n");fclose(closeme);exit(1);
   }
@@ -231,7 +237,7 @@ int main(int argc, char** argv){
   */
 
   SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
-  
+
   errno = 0;
   DIR* CHECKERRNO = opendir(argv[2]);
   if(errno == ENOTDIR){
