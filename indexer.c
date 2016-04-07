@@ -245,8 +245,10 @@ int main(int argc, char** argv){
     directory_handler(argv[2], sortedlist);
   }
 
-  sortedlist = finalSort(sortedlist); //INFINITE LOOP still
+  //sortedlist = finalSort(sortedlist); //INFINITE LOOP still
   //WRITEFILE(OUTPUT, sortedlist); Copy Print Function into WRITEFILE when done
+  FirstSort(sortedlist);
+  SecondSort(sortedlist);
   PrintRecordSortedList(sortedlist);
 
   SLDestroy(sortedlist);

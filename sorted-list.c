@@ -84,7 +84,16 @@ void SLDestroy(SortedListPtr list){
   }
 }
 
-int EqualValue_Count(struct node* p1, struct node* p2){ //unused
+int EqualValue(struct node* p1, struct node* p2){ //unused
+  int x = strcmp(p1->value, p2->value);
+  if(x != 0)
+    return 0;
+  return 1; //Equality
+}
+
+
+
+int EqualValue_Count(struct node* p1, struct node* p2){
   int x = strcmp(p1->value, p2->value);
   int y = p1->refCount - p2->refCount;
   if(x != 0)
@@ -92,6 +101,98 @@ int EqualValue_Count(struct node* p1, struct node* p2){ //unused
   if(y != 0)
     return 0;
   return 1; //Equality
+}
+
+//Put into proper refCount order
+void FirstSort(SortedListPtr list){ //n*n = O(n^2), n = length of linked list
+  if(list == NULL)
+    return;
+  if(list->head == NULL)
+    return;
+  struct node* beforeprev = NULL;
+  struct node* prev = list->head;
+  struct node* ptr = prev->next;
+  if(prev == NULL || ptr == NULL){
+    return;
+  }
+
+ RESTARTSWAP:
+  beforeprev = NULL;
+  prev = list->head;
+  ptr = prev->next;
+  while(ptr != NULL){  //O(n) work
+    if(EqualValue(prev, ptr) && prev->refCount < ptr->refCount){
+      //Problem, swap
+      struct node* after = ptr->next;                                                                                                        
+      ptr->next = prev;                                                                                                                      
+      prev->next = after;                                                                                                                    
+      if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr                                                
+	beforeprev->next = ptr;                                                                                                              
+      struct node* temp = ptr; //Reset pointers back
+      ptr = prev;
+      prev = temp;
+    }
+    beforeprev = prev;
+    prev = ptr;
+    ptr = ptr->next;
+  }
+
+  prev = list->head;
+  ptr = prev->next;
+  while(ptr != NULL){
+    if( EqualValue(prev, ptr) && prev->refCount < ptr->refCount ) 
+      goto RESTARTSWAP;  //Will go to RESTARTSWAP at most O(n) times
+    prev = ptr;
+    ptr = ptr->next;
+  }
+  return;
+
+}
+
+//Put into proper filename order
+void SecondSort(SortedListPtr list){ //n*n = O(n^2), n = length of linked list
+  if(list == NULL)
+    return;
+  if(list->head == NULL){
+    return;
+  }
+  struct node* beforeprev = NULL;
+  struct node* prev = list->head;
+  struct node* ptr = prev->next;
+  if(prev == NULL || ptr == NULL){
+    return;
+  }
+
+ RESTARTSWAP:
+  beforeprev = NULL;
+  prev = list->head;
+  ptr = prev->next;
+  while(ptr != NULL){ //O(n) work
+    if( EqualValue_Count(prev, ptr) && strcmp(prev->filepath, ptr->filepath) > 0){
+      //Problem, swap
+      struct node* after = ptr->next;                                                                                                        
+      ptr->next = prev;                                                                                                                      
+      prev->next = after;                                                                                                                    
+      if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr                                                
+	beforeprev->next = ptr;                                                                                                              
+      struct node* temp = ptr; //Reset pointers back
+      ptr = prev;
+      prev = temp;
+    }
+    beforeprev = prev;
+    prev = ptr;
+    ptr = ptr->next;
+  }
+
+  prev = list->head;
+  ptr = prev->next;
+  while(ptr != NULL){ 
+    if( EqualValue_Count(prev, ptr) && strcmp(prev->filepath, ptr->filepath) > 0 )
+      goto RESTARTSWAP; //Will go to RESTARTSWAP at most O(n) times
+    prev = ptr;
+    ptr = ptr->next;
+  }
+  return;
 }
 
 

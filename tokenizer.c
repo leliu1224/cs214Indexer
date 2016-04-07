@@ -1,4 +1,4 @@
-/*word tokenizer library of functions
+/*word tokenizer library of functions, modified for Asst3
  *Call 'TKFN' to use the tokenizer
  */
 #include <stdio.h>
@@ -155,9 +155,13 @@ SortedListPtr TKFN(char* input, SortedListPtr sortedlist, char* filepath){
   /* loop through the token string */
   while(tokenizer->ptr[0] != '\0'){
     returnedtoken = TKGetNextToken(tokenizer);
-    if(returnedtoken == NULL)
+    if(returnedtoken == NULL || !(isalpha(*returnedtoken)) ) //
       continue;
 
+    int i = 0;
+    for(i = 0; returnedtoken[i]; i++){
+      returnedtoken[i] = tolower(returnedtoken[i]); //convert token to lowercase according to assignment instructions
+    }
     // PrintToken(returnedtoken);
     SLInsert(sortedlist, returnedtoken, filepath); //Insert based on "word" and "filepath"
 
