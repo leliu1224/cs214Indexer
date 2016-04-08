@@ -1,6 +1,7 @@
 all: indexer.c tokenizer.c sorted-list.c
-	gcc -g -o indexer indexer.c tokenizer.c sorted-list.c
+	gcc -Wall -Werror -g -o index main.c indexer.c tokenizer.c sorted-list.c
 
 clean:
 	rm -f outputtext
-	rm -f indexer
+	rm -f *.o
+	rm -f index

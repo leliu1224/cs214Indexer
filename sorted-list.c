@@ -103,6 +103,8 @@ int EqualValue_Count(struct node* p1, struct node* p2){
   return 1; //Equality
 }
 
+/* ONLY EITHER FINALSORT OR FIRST/SECONDSORT IS USED, NOT BOTH!!!*/
+//May be left over
 //Put into proper refCount order
 void FirstSort(SortedListPtr list){ //n*n = O(n^2), n = length of linked list
   if(list == NULL)
@@ -125,7 +127,9 @@ void FirstSort(SortedListPtr list){ //n*n = O(n^2), n = length of linked list
       //Problem, swap
       struct node* after = ptr->next;                                                                                                        
       ptr->next = prev;                                                                                                                      
-      prev->next = after;                                                                                                                    
+      prev->next = after;
+      if(prev == list->head)
+	list->head = ptr;
       if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr                                                
 	beforeprev->next = ptr;                                                                                                              
       struct node* temp = ptr; //Reset pointers back
@@ -172,7 +176,9 @@ void SecondSort(SortedListPtr list){ //n*n = O(n^2), n = length of linked list
       //Problem, swap
       struct node* after = ptr->next;                                                                                                        
       ptr->next = prev;                                                                                                                      
-      prev->next = after;                                                                                                                    
+      prev->next = after; 
+      if(prev == list->head)
+	list->head = ptr;
       if(beforeprev) //if there was something before prev, adjust the pointer to point to ptr                                                
 	beforeprev->next = ptr;                                                                                                              
       struct node* temp = ptr; //Reset pointers back
@@ -216,12 +222,11 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
         return 0;
     }
 
-    struct node* beforeprev = NULL;  //Used to maintain list order
+    //struct node* beforeprev = NULL;  //Used to maintain list order
     struct node* prev = NULL;  //Used to insert and maintain list order
     struct node* ptr = list->head;
 
     while (ptr != NULL && list->COMPARATOR(newnode, ptr) == -1  ) { // //First argument is smaller, iterates ptr to spot of insertion
-        beforeprev = prev;
 	prev = ptr;
 	ptr = ptr->next;
     }
@@ -266,7 +271,8 @@ int SLInsert(SortedListPtr list, char* newObj, char* pathname){
     return 1;
 }
 
-
+/* ONLY EITHER FINALSORT OR FIRST/SECONDSORT IS USED, NOT BOTH!!!*/
+//May be left over
 SortedListPtr finalSort(SortedListPtr list){
   if(list == NULL || list->head == NULL){
     printf("cant sort empty list\n");

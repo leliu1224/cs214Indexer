@@ -6,20 +6,6 @@
 #include "tokenizer.h"
 #include "sorted-list.h"
 
-int RecordComparator(struct node* p1, struct node* p2){
-
-  char* word1 = (char*)p1->value;
-  char* word2 = (char*)p2->value;
-
-  int x = strcmp(word1, word2);
-  if(x > 0) //Iterate forward
-    return -1;
-  else if(x == 0) //Special case
-    return ComparePathHelper(p1, p2);
-  else if(x < 0) //Found spot
-    return 1;
-}
-
 //When the tokens are equal, compare paths
 int ComparePathHelper(struct node* p1, struct node* p2){
 
@@ -30,7 +16,21 @@ int ComparePathHelper(struct node* p1, struct node* p2){
     return -1;
   else if(x == 0)
     return 0;
-  else if(x > 0) //Case where path is greater
+  else//Case where path is greater
+    return 1;
+}
+
+int RecordComparator(struct node* p1, struct node* p2){
+
+  char* word1 = (char*)p1->value;
+  char* word2 = (char*)p2->value;
+
+  int x = strcmp(word1, word2);
+  if(x > 0) //Iterate forward
+    return -1;
+  else if(x == 0) //Special case
+    return ComparePathHelper(p1, p2);
+  else //Found spot
     return 1;
 }
 
@@ -54,27 +54,27 @@ void PrintRecordSortedList(SortedListPtr list){
   do{ //Fix commas...
     if(prev != NULL){
       if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
-       printf("\t]},\n");
-       printf("\t{\"%s\" : [\n", ptr->value);
-       if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
-         printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
-       else
-        printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
-      prev = ptr;
-      ptr = ptr->next;
-      continue;
+	printf("\t]},\n");
+	printf("\t{\"%s\" : [\n", ptr->value);
+	if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+	  printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+	else
+	  printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+	prev = ptr;
+	ptr = ptr->next;
+	continue;
+      }
     }
-  }
-  if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
-    printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
-  else
-    printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
-  prev = ptr;
-  ptr = ptr->next;
+    if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+      printf("\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+    else
+      printf("\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+    prev = ptr;
+    ptr = ptr->next;
 
 
-  if(ptr == NULL)
-    printf("\t]}\n");
+    if(ptr == NULL)
+      printf("\t]}\n");
 }while(ptr != NULL);
 
   printf("]}\n");
@@ -90,6 +90,40 @@ char* ConcatPath(char* s1, char* s2) {
   strcat(newstring, s2);
   newstring[strlen(newstring)] = '\0';
   return newstring; //Remember to free this
+}
+
+int file_handler(char* filename, char* path, SortedListPtr sortedlist){
+  //Takes in filename, the path to get to the file, and the list as args
+  //Open file, Tokenize words, Put words into index by filename
+  FILE *fp;
+  long lSize;
+  char *buffer;
+
+  fp = fopen ( path , "rb" );
+  if( !fp ){
+    perror(path);return 0;
+  }
+
+  fseek( fp , 0L , SEEK_END);
+  lSize = ftell( fp );
+  rewind( fp );
+
+  /* allocate memory for entire content */
+  buffer = calloc( 1, lSize+1 );
+  if( !buffer ){ //Error check
+    fclose(fp);printf("malloc failed in %s at line %d\n", __FILE__,__LINE__);return 0; }
+
+  /* copy the file into the buffer */
+  if( 1!=fread( buffer , lSize, 1 , fp) ){ //Error check
+    fclose(fp),free(buffer);printf("fread failed in %s at line %d, caused by filepath: \"%s\"\n", __FILE__,__LINE__, path);return 0; }
+
+  /* do your work here, buffer is a string contains the whole text */  
+  TKFN(buffer, sortedlist, filename);
+  // printf("%s",buffer);
+  
+  free(buffer);
+  fclose(fp);
+  return 1;
 }
 
 int directory_handler(char* path, SortedListPtr sortedlist){
@@ -124,145 +158,45 @@ int directory_handler(char* path, SortedListPtr sortedlist){
   return 1;
 }
 
-int file_handler(char* filename, char* path, SortedListPtr sortedlist){
-  //Takes in filename, the path to get to the file, and the list as args
-  //Open file, Tokenize words, Put words into index by filename
-  FILE *fp;
-  long lSize;
-  char *buffer;
-
-  fp = fopen ( path , "rb" );
-  if( !fp ){
-    perror(path);return 0;
-  }
-
-  fseek( fp , 0L , SEEK_END);
-  lSize = ftell( fp );
-  rewind( fp );
-
-  /* allocate memory for entire content */
-  buffer = calloc( 1, lSize+1 );
-  if( !buffer ){ //Error check
-    fclose(fp);printf("malloc failed in %s at line %d\n", __FILE__,__LINE__);return 0; }
-
-  /* copy the file into the buffer */
-  if( 1!=fread( buffer , lSize, 1 , fp) ){ //Error check
-    fclose(fp),free(buffer);printf("fread failed in %s at line %d, caused by filepath: \"%s\"\n", __FILE__,__LINE__, path);return 0; }
-
-  /* do your work here, buffer is a string contains the whole text */
-  TKFN(buffer, sortedlist, filename);
-  // printf("%s",buffer);
-
-  free(buffer);
-  fclose(fp);
-  return 1;
-}
-
 void WRITEFILE( FILE* OUTPUT, SortedListPtr list){
   if(list == NULL || list->head == NULL){
-    printf("WRITEFILE ERROR: Trying to write empty list\n");
+    printf("Trying to print empty list\n");
     return;
   }
   struct node* prev = NULL;
   struct node* ptr = list->head;
-  fprintf(OUTPUT, "{\"list\" : [\n");
+  fprintf(OUTPUT, "{\"list\" : [\n");  //start list
   fprintf(OUTPUT, "\t{\"%s\" : [\n", ptr->value);
 
   do{ //Fix commas...
     if(prev != NULL){
       if( strcmp(prev->value, ptr->value) != 0 ){ //Unique word, new subset
-	fprintf(OUTPUT, "\t]}\n");
+	fprintf(OUTPUT, "\t]},\n");
 	fprintf(OUTPUT, "\t{\"%s\" : [\n", ptr->value);
-	fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+	if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+	  fprintf(OUTPUT, "\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+	else
+	  fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
 	prev = ptr;
 	ptr = ptr->next;
 	continue;
       }
     }
-    fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
+    if((ptr->next != NULL) && (strcmp(ptr->value, ptr->next->value) == 0))
+      fprintf(OUTPUT, "\t\t{\"%s\" : %d},\n", ptr->filepath, ptr->refCount);
+    else
+      fprintf(OUTPUT, "\t\t{\"%s\" : %d}\n", ptr->filepath, ptr->refCount);
     prev = ptr;
     ptr = ptr->next;
+
+
     if(ptr == NULL)
       fprintf(OUTPUT, "\t]}\n");
-  }while(ptr != NULL);
+}while(ptr != NULL);
 
   fprintf(OUTPUT, "]}\n");
+  //printf("%s resides in path: \"%s\"  with count %d\n", ptr->value, ptr->filepath,ptr->refCount); //%p is void format specifier
 
   printf("WRITEFILE success... check your output file\n");
   return;
-}
-
-/*Create new file named argv[1]
- *User must indicate whether to overwrite if file already exists
- *Take in path from argv[2]
- *Will check if the given path is a valid file/dir
- */
-int main(int argc, char** argv){
-  if(argc != 3){
-    printf("Error: wrong number of arguments caught in file:%s at line: %d\n", __FILE__, __LINE__);
-    printf("Please give input in the format \"./index <output name> <dir or file>\"\n");
-    return 0;}
-
-  FILE* OUTPUT = NULL;
-  FILE* closeme = NULL;
-  if(  (closeme = (fopen(argv[1], "r"))) != NULL){ //Check if output file already exists, does user wish to overwrite?
-
-    printf("File already exists. Would you like to overwrite the file: %s?\n", argv[1]);
-    printf("Enter '0' if you dont want to overwrite\n");printf("Enter '1' if you want overwrite the file\n");
-
-    int userinput;
-    scanf("%d", &userinput);
-    switch(userinput){
-    case 0:
-      printf("Program will end because you chose not to overwrite. Rerun with a new argument\n");
-      exit(1);
-    case 1://Continue through exits
-      break;
-    default:
-      printf("Program will end; you did not give proper input\n");
-      exit(1);
-    }
-  }
-
-  OUTPUT = fopen(argv[1], "w"); //Open argv[1] in writemode, referenced by FILE* OUTPUT.
-
-  if(OUTPUT == NULL){
-    printf("Failed to open output file in write mode\n");fclose(closeme);exit(1);
-  }
-
-  /*is argv[2] a directory or file?
-  *something = opendir(argv[2]);
-  *if no errno == ENOTDIR, run file handler
-  *else if no other error, run directory handler
-  */
-
-  SortedListPtr sortedlist = SLCreate(RecordComparator, RecordDestructor);
-
-  errno = 0;
-  DIR* CHECKERRNO = opendir(argv[2]);
-  if(errno == ENOTDIR){
-    file_handler(argv[2], argv[2], sortedlist);
-  }
-  else if(errno == ENOENT){
-    SLDestroy(sortedlist);fclose(OUTPUT);fclose(closeme);closedir(CHECKERRNO);
-    printf("ENOENT Error. Cannot open NONEXISTING file/dir\n");exit(1);
-  }
-  else{
-    directory_handler(argv[2], sortedlist);
-  }
-
-  //sortedlist = finalSort(sortedlist); //INFINITE LOOP still
-  //WRITEFILE(OUTPUT, sortedlist); Copy Print Function into WRITEFILE when done
-  FirstSort(sortedlist);
-  SecondSort(sortedlist);
-  PrintRecordSortedList(sortedlist);
-
-  SLDestroy(sortedlist);
-  if(OUTPUT)
-    fclose(OUTPUT);
-  if(closeme)
-    fclose(closeme);
-  if(CHECKERRNO)
-    closedir(CHECKERRNO);
-  return 0;
 }

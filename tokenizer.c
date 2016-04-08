@@ -114,12 +114,12 @@ int getchartype(char* str){
 }
 
 /* function for printing */
+/*
 int PrintToken(char* str){
   if(str == NULL){
     return 1;
   }
 
-  /* Convert to lowercase and print word */
   if( isalpha(str[0]) ){
     char* lowercasestr;
     int len = strlen(str);
@@ -133,6 +133,7 @@ int PrintToken(char* str){
     return 1;
   }
 }
+*/
 
 /*
  * tokenizerfn will have a string input.
